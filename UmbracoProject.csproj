@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CompressionEnabled>false</CompressionEnabled>
+
+    <!-- Enable packing -->
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+
+    <!-- NuGet package metadata -->
+    <PackageId>YourCompany.YourPackage</PackageId>
+    <Version>1.0.0</Version>
+    <Title>YourPackage for Umbraco</Title>
+    <Description>Reusable Property Editors and backoffice extensions for Umbraco (App_Plugins/YourPackage).</Description>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <PackageTags>umbraco;umbraco-cms;App_Plugins;property-editor;backoffice</PackageTags>
+    <PackageProjectUrl>https://github.com/yourorg/YourPackage</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yourorg/YourPackage.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- Ensure content files are delivered to consumers -->
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <ContentTargetFolders>contentFiles\any\any</ContentTargetFolders>
+
+    <!-- Razor files needed for the backoffice -->
+    <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
+    <RazorCompileOnBuild>false</RazorCompileOnBuild>
+    <RazorCompileOnPublish>false</RazorCompileOnPublish>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Clean" Version="6.0.1" />
+    <PackageReference Include="Umbraco.Cms" Version="16.2.0-rc2" />
+    <PackageReference Include="uSync" Version="16.0.0-rc2" />
+    <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
+    <!-- Optional: enable Source Link for better debugging of the package -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- App-local ICU for non-OSX when RID set -->
+    <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu"
+      Value="72.1.0.3"
+      Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
+  </ItemGroup>
+
+  <!-- Include App_Plugins in build/publish and pack -->
+  <ItemGroup>
+    <Content Include="App_Plugins\**\*.*"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="Always"
+             Pack="true"
+             PackageCopyToOutput="true" />
+  </ItemGroup>
+
+  <!-- Optional: include uSync exports if you want to ship Data Types, etc. -->
+  <!--
+  <ItemGroup>
+    <Content Include="uSync\**\*.*" Pack="true" PackageCopyToOutput="true" />
+  </ItemGroup>
+  -->
+
+  <!-- Optional: include README and icon in the package -->
+  <!--
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  -->
+</Project>
